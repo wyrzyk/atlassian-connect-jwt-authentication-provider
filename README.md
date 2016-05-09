@@ -1,1 +1,3 @@
 # atlassian-connect-jwt-authentication-provider
+
+[![Build Status](https://travis-ci.org/wyrzyk/atlassian-connect-jwt-authentication-provider.svg?branch=master)](https://travis-ci.org/wyrzyk/atlassian-connect-jwt-authentication-provider) [![Coverage Status](https://coveralls.io/repos/github/wyrzyk/atlassian-connect-jwt-authentication-provider/badge.svg?branch=master)](https://coveralls.io/github/wyrzyk/atlassian-connect-jwt-authentication-provider?branch=master)
