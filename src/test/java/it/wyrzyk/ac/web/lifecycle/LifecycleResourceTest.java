@@ -4,6 +4,7 @@ import com.atlassian.jwt.CanonicalHttpRequest;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.jayway.restassured.module.mockmvc.response.MockMvcResponse;
 import com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
+import it.wyrzyk.ac.web.config.WebConfiguration;
 import org.hamcrest.Matchers;
 import org.joor.Reflect;
 import org.junit.Before;
@@ -19,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import wyrzyk.ac.api.ClientInfoDto;
 import wyrzyk.ac.auth.JwtService;
-import it.wyrzyk.ac.web.config.WebConfiguration;
 import wyrzyk.ac.lifecycle.LifecycleService;
 
 import java.util.Optional;
@@ -34,6 +34,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @WebAppConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {WebConfiguration.class})
+@Transactional
+@Rollback
 public class LifecycleResourceTest {
     private static final String LIFECYCLE_PATH = "/lifecycle";
     private static final String LIFECYCLE_INSTALLED_PATH = LIFECYCLE_PATH + "/installed";
@@ -72,9 +74,8 @@ public class LifecycleResourceTest {
     }
 
     @Test
-    @Transactional
-    @Rollback()
-    public void instalationShouldFailWithoutAuthenticationHeader() throws Exception {
+    public void secondInstalationShouldFailWithoutAuthenticationHeader() throws Exception {
+        createInstalled(prepareDefaultRequestBuilder().build());
         createLifecycleRequest(LIFECYCLE_INSTALLED_PATH, prepareDefaultRequestBuilder().build(),
                 empty())
                 .then()
@@ -82,8 +83,6 @@ public class LifecycleResourceTest {
     }
 
     @Test
-    @Transactional
-    @Rollback()
     public void testIfInitializePayloadSaved() throws Exception {
         assertThat(lifecycleServiceProxy.countClients()).isZero();
         createInstalled(prepareDefaultRequestBuilder()
@@ -95,8 +94,6 @@ public class LifecycleResourceTest {
     }
 
     @Test
-    @Transactional
-    @Rollback()
     public void testTwoPayloadsSaved() throws Exception {
         assertThat(lifecycleServiceProxy.countClients()).isZero();
         createInstalled(prepareDefaultRequestBuilder()
@@ -112,8 +109,6 @@ public class LifecycleResourceTest {
     }
 
     @Test
-    @Transactional
-    @Rollback()
     public void testIfPluginIsReinstalledAndSecondRequestHasProperJwtToken() throws Exception {
         assertThat(lifecycleServiceProxy.countClients()).isZero();
         createInstalled(prepareDefaultRequestBuilder()
@@ -129,8 +124,6 @@ public class LifecycleResourceTest {
     }
 
     @Test
-    @Transactional
-    @Rollback()
     public void testIfPluginIsReinstalledAndSecondRequestHasFakeJwtToken() throws Exception {
         assertThat(lifecycleServiceProxy.countClients()).isZero();
         createInstalled(prepareDefaultRequestBuilder()
@@ -148,8 +141,6 @@ public class LifecycleResourceTest {
     }
 
     @Test
-    @Transactional
-    @Rollback()
     public void testWholeLifecycle() throws Exception {
         assertThat(lifecycleServiceProxy.countClients()).isZero();
         final LifecycleRequestMock preparedRequest = prepareDefaultRequestBuilder()

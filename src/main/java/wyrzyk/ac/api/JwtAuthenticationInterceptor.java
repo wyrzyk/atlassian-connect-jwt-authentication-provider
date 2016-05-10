@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
-import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 class JwtAuthenticationInterceptor implements HandlerInterceptor {
     @Autowired
@@ -29,24 +28,23 @@ class JwtAuthenticationInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception {
         final Optional<String> jwtTokenOptional = extractJwtToken(request);
-        if (!jwtTokenOptional.isPresent()) {
-            response.setStatus(SC_UNAUTHORIZED);
-            return false;
-        }
-        if (isFirstInstalledRequest((HandlerMethod) o, jwtTokenOptional)) {
+        if (isInstalledRequest((HandlerMethod) o) && !isClientAlreadyInstalled(jwtTokenOptional)) {
             return true;
         }
         return jwtAuthenticator.authenticate(request, response);
     }
 
-    private boolean isFirstInstalledRequest(HandlerMethod o, Optional<String> jwtTokenOptional) {
-        final boolean isInstalledRequest = StringUtils.equals(o.getMethod().getName(), "installed");
-        final boolean isClientAlreadyInstalled = !jwtTokenOptional
+    private boolean isClientAlreadyInstalled(Optional<String> jwtTokenOptional) {
+        return jwtTokenOptional
                 .flatMap(jwtService::extractIssuerUnverified)
                 .flatMap(lifecycleService::findClient)
                 .isPresent();
-        return isInstalledRequest && isClientAlreadyInstalled;
     }
+
+    private boolean isInstalledRequest(HandlerMethod handlerMethod) {
+        return StringUtils.equals(handlerMethod.getMethod().getName(), "installed");
+    }
+
 
     @Override
     public void postHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
