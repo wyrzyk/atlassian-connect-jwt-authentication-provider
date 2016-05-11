@@ -1,10 +1,19 @@
 package wyrzyk.ac.lifecycle;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Value;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.experimental.FieldDefaults;
 import wyrzyk.ac.api.ClientInfoDto;
 
-@Value
+@ToString
+@EqualsAndHashCode(of = {"clientKey", "baseUrl", "productType", "installed", "enabled"})
+@AllArgsConstructor
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@Getter
 @Builder
 class ClientInfoDtoImpl implements ClientInfoDto {
     Long id;
