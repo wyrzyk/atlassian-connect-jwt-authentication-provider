@@ -29,9 +29,4 @@ class ClientInfoDtoImpl implements ClientInfoDto {
     String serviceEntitlementNumber;
     boolean installed;
     boolean enabled;
-
-    @Override
-    public boolean isAcive() {
-        return installed && enabled;
-    }
 }

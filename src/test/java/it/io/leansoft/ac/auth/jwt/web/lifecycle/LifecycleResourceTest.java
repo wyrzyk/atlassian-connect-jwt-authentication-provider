@@ -4,6 +4,9 @@ import com.atlassian.jwt.CanonicalHttpRequest;
 import com.atlassian.jwt.httpclient.CanonicalHttpUriRequest;
 import com.jayway.restassured.module.mockmvc.response.MockMvcResponse;
 import com.jayway.restassured.module.mockmvc.specification.MockMvcRequestSpecification;
+import io.leansoft.ac.auth.jwt.api.ClientInfoDto;
+import io.leansoft.ac.auth.jwt.auth.JwtService;
+import io.leansoft.ac.auth.jwt.lifecycle.LifecycleService;
 import it.io.leansoft.ac.auth.jwt.web.config.WebConfiguration;
 import org.hamcrest.Matchers;
 import org.joor.Reflect;
@@ -18,9 +21,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
-import io.leansoft.ac.auth.jwt.api.ClientInfoDto;
-import io.leansoft.ac.auth.jwt.auth.JwtService;
-import io.leansoft.ac.auth.jwt.lifecycle.LifecycleService;
 
 import java.util.Optional;
 
@@ -60,7 +60,7 @@ public class LifecycleResourceTest {
     }
 
     @Before
-    public void before(){
+    public void before() {
         lifecycleServiceProxy = Reflect.on(lifecycleService).as(LifecycleServiceProxy.class);
     }
 
@@ -120,7 +120,13 @@ public class LifecycleResourceTest {
         assertThat(lifecycleServiceProxy.countClients())
                 .isEqualTo(1);
         assertThat(lifecycleServiceProxy.findClient(CLIENT_KEY)).isNotEmpty();
-        assertThat(lifecycleServiceProxy.findClient(CLIENT_KEY).get().getSharedSecret()).isEqualTo("new");
+        assertThat(extractSharedSecret()).isEqualTo("new");
+    }
+
+    private Object extractSharedSecret() {
+        final ClientInfoDto clientInfoDto = lifecycleServiceProxy.findClient(CLIENT_KEY).get();
+        return Reflect.on(clientInfoDto).as(ClientInfoDtoProxy.class)
+                .getSharedSecret();
     }
 
     @Test
@@ -137,7 +143,7 @@ public class LifecycleResourceTest {
                 .statusCode(SC_UNAUTHORIZED);
         assertThat(lifecycleServiceProxy.countClients())
                 .isEqualTo(1);
-        assertThat(lifecycleServiceProxy.findClient(CLIENT_KEY).get().getSharedSecret()).isEqualTo(SHARED_SECRET);
+        assertThat(extractSharedSecret()).isEqualTo(SHARED_SECRET);
     }
 
     @Test
@@ -208,5 +214,9 @@ public class LifecycleResourceTest {
         boolean isInstalled(String clientKey);
 
         long countClients();
+    }
+
+    interface ClientInfoDtoProxy {
+        String getSharedSecret();
     }
 }

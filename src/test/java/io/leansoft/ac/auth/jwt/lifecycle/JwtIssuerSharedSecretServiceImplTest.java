@@ -1,4 +1,4 @@
-package io.leansoft.ac.auth.jwt.auth;
+package io.leansoft.ac.auth.jwt.lifecycle;
 
 import com.atlassian.jwt.core.reader.JwtIssuerSharedSecretService;
 import com.atlassian.jwt.exception.JwtIssuerLacksSharedSecretException;
@@ -8,8 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import io.leansoft.ac.auth.jwt.api.ClientInfoDto;
-import io.leansoft.ac.auth.jwt.lifecycle.LifecycleService;
 
 import java.util.Optional;
 
@@ -18,12 +16,12 @@ import static org.mockito.Mockito.when;
 
 public class JwtIssuerSharedSecretServiceImplTest {
     private static final String CLIENT_KEY = "clientKey";
-    private  static final String SECRET = "secret";
+    private static final String SECRET = "secret";
 
     @Mock
     private LifecycleService lifecycleService;
     @Mock
-    private ClientInfoDto clientInfoDto;
+    private ClientInfoDtoImpl clientInfoDto;
 
     @Before
     public void initMocks() {
