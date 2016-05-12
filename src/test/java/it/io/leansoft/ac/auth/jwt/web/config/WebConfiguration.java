@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import io.leansoft.ac.auth.jwt.api.AtlassianConnectUtils;
+import io.leansoft.ac.auth.jwt.api.AtlassianConnectAuthUtils;
 
 import java.util.List;
 
@@ -33,11 +33,11 @@ public class WebConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(AtlassianConnectUtils.createClientDtoResolver());
+        argumentResolvers.add(AtlassianConnectAuthUtils.createClientDtoResolver());
     }
 
     @Bean
     public HandlerInterceptor jwtAuthenticationInterceptor() {
-        return AtlassianConnectUtils.createJwtAuthenticationInterceptor();
+        return AtlassianConnectAuthUtils.createJwtAuthenticationInterceptor();
     }
 }
