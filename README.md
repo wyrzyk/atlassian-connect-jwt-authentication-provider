@@ -1,3 +1,3 @@
-# atlassian-connect-jwt-authentication-provider
+# Atlassian Connect Java authentication [![Build Status](https://travis-ci.org/wyrzyk/atlassian-connect-jwt-authentication-provider.svg?branch=master)](https://travis-ci.org/wyrzyk/atlassian-connect-jwt-authentication-provider) [![Coverage Status](https://coveralls.io/repos/github/wyrzyk/atlassian-connect-jwt-authentication-provider/badge.svg?branch=master)](https://coveralls.io/github/wyrzyk/atlassian-connect-jwt-authentication-provider?branch=master)
 
-[![Build Status](https://travis-ci.org/wyrzyk/atlassian-connect-jwt-authentication-provider.svg?branch=master)](https://travis-ci.org/wyrzyk/atlassian-connect-jwt-authentication-provider) [![Coverage Status](https://coveralls.io/repos/github/wyrzyk/atlassian-connect-jwt-authentication-provider/badge.svg?branch=master)](https://coveralls.io/github/wyrzyk/atlassian-connect-jwt-authentication-provider?branch=master)
+This library provides JWT authentication for the Java/Spring based applications. It helps to create Atlassian Connect plugins.

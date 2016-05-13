@@ -12,7 +12,7 @@ public class AtlassianConnectAuthUtils {
     /**
      * Creates a new instance of {@link HandlerMethodArgumentResolver}. The resolver helps to bind {@link ClientInfoDto} from
      * a request. An example of usage can be found in the implementation of
-     * {@link io.leansoft.ac.auth.jwt.lifecycle.LifecycleResource#installed(ClientInfoRequest, ClientInfoDto)}.
+     * io.leansoft.ac.auth.jwt.lifecycle.LifecycleResource#installed(ClientInfoRequest, ClientInfoDto).
      * Configuration classes of the integration tests could help you to understand how to register this handler.
      *
      * @return resolver for {@link ClientInfoDto}
