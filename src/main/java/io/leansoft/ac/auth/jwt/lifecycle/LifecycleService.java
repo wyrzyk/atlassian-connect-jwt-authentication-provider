@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
 @Service
@@ -23,18 +24,10 @@ public class LifecycleService {
     }
 
     @Transactional
-    ClientInfoDtoImpl save(ClientInfoEntity newClientInfoEntity) {
-        final String clientKey = newClientInfoEntity.getClientKey();
-        final ClientInfoEntity lifecycleEntity = clientInfoRepository.findByClientKey(clientKey);
-        if (lifecycleEntity != null) {
-            log.debug("Plugin has been installed again for user {}", clientKey);
-            newClientInfoEntity.setId(lifecycleEntity.getId());
-        } else {
-            log.debug("Plugin has been installed for user {}", clientKey);
-        }
-        newClientInfoEntity.setInstalled(true);
-        final ClientInfoEntity entity = clientInfoRepository.save(newClientInfoEntity);
-        return entity.toDto();
+    Optional<ClientInfoDtoImpl> save(ClientInfoEntity newClientInfoEntity) {
+        final ClientInfoEntity entity = saveOrUpdate(newClientInfoEntity);
+        return ofNullable(entity)
+                .map(ClientInfoEntity::toDto);
     }
 
     boolean setInstalled(String clientKey, boolean installed) {
@@ -69,5 +62,23 @@ public class LifecycleService {
 
     private long countClients() {
         return clientInfoRepository.count();
+    }
+
+    private ClientInfoEntity saveOrUpdate(ClientInfoEntity newClientInfoEntity) {
+        final String clientKey = newClientInfoEntity.getClientKey();
+        final ClientInfoEntity lifecycleEntity = clientInfoRepository.findByClientKey(clientKey);
+        if (lifecycleEntity != null) {
+            log.info("Plugin has been installed again for user {}", clientKey);
+            newClientInfoEntity.setId(lifecycleEntity.getId());
+        } else {
+            log.info("Plugin has been installed for user {}", clientKey);
+        }
+        newClientInfoEntity.setInstalled(true);
+        try {
+            return clientInfoRepository.save(newClientInfoEntity);
+        } catch (Exception e) {
+            log.error(format("error while saving clientInfo entity %s", newClientInfoEntity), e);
+            return null;
+        }
     }
 }

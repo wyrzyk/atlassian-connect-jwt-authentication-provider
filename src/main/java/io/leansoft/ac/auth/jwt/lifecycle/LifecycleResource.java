@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 
@@ -29,12 +31,8 @@ class LifecycleResource {
             log.warn("Blocked attempt to install clientInfoDto without authorization for: {}", clientInfoRequest);
             return ResponseEntity.status(SC_UNAUTHORIZED).build();
         }
-        final ClientInfoDtoImpl lifecycleDto = lifecycleService.save(ClientInfoEntity.fromDto(clientInfoRequest.toDto()));
-        if (lifecycleDto.getId() != null) {   // todo: fix error handling
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+        final ClientInfoEntity clientInfoEntity = ClientInfoEntity.fromDto(clientInfoRequest.toDto());
+        return saveEntity(clientInfoEntity);
     }
 
     @RequestMapping(value = "enabled")
@@ -53,5 +51,13 @@ class LifecycleResource {
     public ResponseEntity<Void> uninstalled(@RequestBody ClientInfoRequest clientInfoRequest) {
         return lifecycleService.setInstalled(clientInfoRequest.getClientKey(), false) ?
                 ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
+    }
+
+    private ResponseEntity<Void> saveEntity(ClientInfoEntity clientInfoEntity) {
+        final Optional<ClientInfoDtoImpl> clientInfoDtoOptional = lifecycleService.save(clientInfoEntity);
+        return clientInfoDtoOptional
+                .map(ClientInfoDtoImpl::getId)
+                .map(aLong -> ResponseEntity.ok().build())
+                .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 }
