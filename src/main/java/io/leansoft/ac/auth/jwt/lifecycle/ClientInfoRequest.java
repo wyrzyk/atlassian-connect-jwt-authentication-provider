@@ -1,9 +1,9 @@
 package io.leansoft.ac.auth.jwt.lifecycle;
 
 
-import lombok.Value;
+import lombok.Data;
 
-@Value
+@Data
 class ClientInfoRequest {
     String key;
     String clientKey;
